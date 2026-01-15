@@ -10,6 +10,7 @@ Resolves required AI assistant skills and MCP servers for a project, and provisi
 ## Contents
 
 - [Overview](#overview)
+- [Step 0: Verify Project Exists](#step-0-verify-project-exists)
 - [Step 1: Detect Current Setup](#step-1-detect-current-setup)
 - [Step 2: Analyze Project Tech Stack](#step-2-analyze-project-tech-stack)
 - [Step 2.5: Detect Conflicts](#step-25-detect-conflicts)
@@ -28,6 +29,27 @@ This skill performs three core functions:
 1. **Inventory** - Detect currently installed skills/MCPs across AI assistants
 2. **Resolve** - Identify project tech stack and determine required tools
 3. **Provision** - Install recommended tools or scaffold new ones
+
+## Step 0: Verify Project Exists
+
+Skip analysis if no real project is detected. Check these indicators:
+
+```bash
+# Check if project is initialized (any of these)
+[ -d .git ] && [ "$(git rev-list --count HEAD 2>/dev/null)" -gt 0 ] && echo "Git repo with commits"
+ls package.json composer.json pyproject.toml Cargo.toml go.mod Gemfile *.csproj pom.xml pubspec.yaml 2>/dev/null
+ls -d src/ lib/ app/ 2>/dev/null
+```
+
+| Indicator | Meaning |
+|-----------|---------|
+| `.git/` with ≥1 commit | Version controlled project |
+| Config file exists | Framework/language initialized |
+| `src/`, `lib/`, or `app/` dir | Source code present |
+
+**If none match:** Respond with "No project detected yet. Initialize your project first (e.g., `npm init`, `git init && git commit`)."
+
+**If any match:** Proceed to Step 1.
 
 ## Step 1: Detect Current Setup
 
