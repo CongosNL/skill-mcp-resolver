@@ -33,7 +33,7 @@ First, inventory what's already installed across AI assistants:
 | **Windsurf** | `~/.windsurf/`, `.windsurfrules` |
 | **Continue.dev** | `~/.continue/config.json` |
 | **Copilot** | `.github/copilot-instructions.md` |
-| **Cline** | Cline config locations |
+| **Cline** | `~/.cline/`, `cline_mcp_settings.json` |
 | **Aider** | `.aider.conf.yml`, `aider.conf.yml` |
 
 ### Detection Commands
@@ -51,8 +51,25 @@ cat .mcp.json 2>/dev/null
 # Codex skills
 ls ~/.codex/skills/*/SKILL.md 2>/dev/null
 
-# Cursor rules
+# Cursor rules and MCP
 cat .cursorrules 2>/dev/null
+cat .cursor/mcp.json 2>/dev/null
+
+# Windsurf rules
+cat .windsurfrules 2>/dev/null
+ls ~/.windsurf/ 2>/dev/null
+
+# Continue.dev config
+cat ~/.continue/config.json 2>/dev/null | grep -A 30 '"contextProviders"'
+
+# Cline MCP settings
+cat ~/.cline/cline_mcp_settings.json 2>/dev/null
+
+# Copilot instructions
+cat .github/copilot-instructions.md 2>/dev/null
+
+# Aider config
+cat .aider.conf.yml aider.conf.yml 2>/dev/null
 ```
 
 ## Step 2: Analyze Project Tech Stack
@@ -145,10 +162,10 @@ For each detected technology, search:
 
 | Rating | Score | Meaning |
 |--------|-------|---------|
-| ⭐⭐⭐ Aanbevolen | >75% | Actively maintained, good docs |
-| ⭐⭐ Bruikbaar | 50-75% | Works but less active |
-| ⭐ Experimenteel | <50% | May work, has risks |
-| ❌ Afraden | - | Abandoned, broken, security issues |
+| ⭐⭐⭐ Recommended | >75% | Actively maintained, good docs |
+| ⭐⭐ Usable | 50-75% | Works but less active |
+| ⭐ Experimental | <50% | May work, has risks |
+| ❌ Avoid | - | Abandoned, broken, security issues |
 
 ## Output Format
 
@@ -156,33 +173,33 @@ Present findings in this structure:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│           PROJECT TOOLING ANALYSE: [project-naam]                   │
+│           PROJECT TOOLING ANALYSIS: [project-name]                  │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│  📊 GEDETECTEERDE STACK                                             │
+│  📊 DETECTED STACK                                                  │
 │  • [Technology 1]                                                   │
 │  • [Technology 2]                                                   │
 │                                                                     │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│  ✅ REEDS BESCHIKBAAR                                               │
+│  ✅ ALREADY AVAILABLE                                               │
 │  • [Installed skill/MCP] → [what it helps with]                     │
 │                                                                     │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│  🔍 AANBEVOLEN TOEVOEGINGEN                                         │
+│  🔍 RECOMMENDED ADDITIONS                                           │
 │                                                                     │
 │  1. [Tool name]                                      [Rating]       │
-│     Bron: [URL]                                                     │
-│     Compatibel: [Assistants]                                        │
-│     Installatie: [command]                                          │
+│     Source: [URL]                                                   │
+│     Compatible: [Assistants]                                        │
+│     Install: [command]                                              │
 │     → [What it enables]                                             │
 │                                                                     │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│  ⚠️  GAPS - GEEN KWALITATIEVE TOOL GEVONDEN                         │
+│  ⚠️  GAPS - NO QUALITY TOOL FOUND                                   │
 │  • [Technology without good tooling]                                │
-│    → Scaffold beschikbaar: [command]                                │
+│    → Scaffold available: [command]                                  │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
@@ -230,13 +247,41 @@ Ask these questions:
 2. What tasks should it support?
 3. Which AI assistants should it support?
 
-Generate SKILL.md with:
-- Frontmatter (name, description with "Use when...")
-- Overview section
-- When to Use section
-- Core patterns/commands
-- Common mistakes
-- Quick reference
+Generate SKILL.md from this template:
+
+```markdown
+---
+name: [skill-name]
+description: Use when [specific triggering conditions]
+---
+
+# [Skill Name]
+
+[One-sentence description of what this skill does]
+
+## Overview
+
+[2-3 sentences explaining the core purpose and approach]
+
+## When to Use
+
+- [Trigger condition 1]
+- [Trigger condition 2]
+- When NOT to use: [exclusion]
+
+## Quick Reference
+
+| Action | Command/Pattern |
+|--------|-----------------|
+| [Action 1] | `[command]` |
+| [Action 2] | `[command]` |
+
+## Common Mistakes
+
+### [Mistake name]
+**Problem:** [What goes wrong]
+**Fix:** [How to fix it]
+```
 
 **Output location:** `~/.claude/skills/[name]/SKILL.md` (or equivalent for other assistants)
 
@@ -248,19 +293,62 @@ Ask these questions:
 3. What resources (read-only data)?
 4. Where to create the project?
 
-Generate project structure:
+Generate project with this starter template:
+
+**package.json:**
+```json
+{
+  "name": "mcp-server-[name]",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+**src/index.ts:**
+```typescript
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+
+const server = new Server({ name: "mcp-server-[name]", version: "0.1.0" }, {
+  capabilities: { tools: {} }
+});
+
+server.setRequestHandler("tools/list", async () => ({
+  tools: [{
+    name: "[tool-name]",
+    description: "[What the tool does]",
+    inputSchema: { type: "object", properties: {} }
+  }]
+}));
+
+server.setRequestHandler("tools/call", async (request) => {
+  if (request.params.name === "[tool-name]") {
+    return { content: [{ type: "text", text: "Result" }] };
+  }
+  throw new Error("Unknown tool");
+});
+
+new StdioServerTransport().connect(server);
+```
+
+**Project structure:**
 ```
 [project-name]/
 ├── package.json
 ├── tsconfig.json
-├── README.md
 ├── src/
-│   ├── index.ts
-│   ├── server.ts
-│   ├── tools/
-│   │   └── [tool-name].ts
-│   └── resources/
-│       └── [resource-name].ts
+│   └── index.ts
 └── .mcp.json
 ```
 
@@ -284,6 +372,26 @@ Provide next steps:
 | GitHub | github MCP |
 | Shopify | shopify skill |
 | Stripe | stripe MCP |
+
+## Error Handling
+
+### Marketplace Unavailable
+If a marketplace fails to respond or times out:
+- Skip that source, continue with others
+- Note the failure in output: "⚠️ [source] unavailable, results may be incomplete"
+- Rely more heavily on GitHub search as fallback
+
+### No Results Found
+If no tools found for a technology:
+- Verify technology name spelling variants (e.g., "PostgreSQL" vs "Postgres")
+- Search for broader category (e.g., "database" instead of specific DB)
+- Offer scaffold option as primary action
+
+### Conflicting Recommendations
+If multiple tools exist for same purpose:
+- Compare quality scores and pick highest
+- If scores equal, prefer official/curated sources
+- Note alternatives in output for user choice
 
 ## Common Mistakes
 
