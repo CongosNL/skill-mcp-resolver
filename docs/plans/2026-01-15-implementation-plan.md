@@ -1,3 +1,31 @@
+# Project Tooling Analyzer - Implementation Plan
+
+> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+
+**Goal:** Build a skill that analyzes project directories and recommends AI assistant skills/MCPs for development.
+
+**Architecture:** Single SKILL.md with embedded logic, using Web search for marketplace queries and file system analysis for tech stack detection. Output is structured recommendations with installation commands.
+
+**Tech Stack:** Claude skill (SKILL.md format), WebSearch, Glob, Read, Bash tools
+
+---
+
+## Phase 1: Core Skill Structure
+
+### Task 1: Create SKILL.md skeleton
+
+**Files:**
+- Create: `skill/project-tooling-analyzer/SKILL.md`
+
+**Step 1: Create directory structure**
+
+```bash
+mkdir -p skill/project-tooling-analyzer
+```
+
+**Step 2: Write SKILL.md frontmatter and overview**
+
+```markdown
 ---
 name: project-tooling-analyzer
 description: Use when starting work on a new or unfamiliar project, when project dependencies change significantly, or when asked to recommend AI tooling. Analyzes project files to identify tech stack and suggests relevant skills and MCP servers.
@@ -20,7 +48,27 @@ This skill performs three core functions:
 - After significant dependency changes (new framework, database, etc.)
 - When asked "what tools do I need for this project?"
 - Periodically to check for new relevant tooling
+```
 
+**Step 3: Commit skeleton**
+
+```bash
+git add skill/project-tooling-analyzer/SKILL.md
+git commit -m "feat: add SKILL.md skeleton with frontmatter and overview"
+```
+
+---
+
+### Task 2: Add Current Setup Detection section
+
+**Files:**
+- Modify: `skill/project-tooling-analyzer/SKILL.md`
+
+**Step 1: Add LLM-agnostic detection table**
+
+Append to SKILL.md:
+
+```markdown
 ## Step 1: Detect Current Setup
 
 First, inventory what's already installed across AI assistants:
@@ -54,7 +102,27 @@ ls ~/.codex/skills/*/SKILL.md 2>/dev/null
 # Cursor rules
 cat .cursorrules 2>/dev/null
 ```
+```
 
+**Step 2: Commit detection section**
+
+```bash
+git add skill/project-tooling-analyzer/SKILL.md
+git commit -m "feat: add current setup detection for multiple AI assistants"
+```
+
+---
+
+### Task 3: Add Tech Stack Detection section
+
+**Files:**
+- Modify: `skill/project-tooling-analyzer/SKILL.md`
+
+**Step 1: Add tech stack detection logic**
+
+Append to SKILL.md:
+
+```markdown
 ## Step 2: Analyze Project Tech Stack
 
 Detect technologies from config files:
@@ -84,7 +152,7 @@ Detect technologies from config files:
 ```bash
 # List all config files in project root
 ls -la package.json composer.json requirements.txt pyproject.toml \
-   Cargo.toml go.mod Gemfile *.csproj pom.xml build.gradle docker-compose.yml 2>/dev/null
+   Cargo.toml go.mod Gemfile *.csproj docker-compose.yml 2>/dev/null
 
 # Check package.json dependencies
 cat package.json 2>/dev/null | grep -A 50 '"dependencies"'
@@ -95,7 +163,29 @@ cat composer.json 2>/dev/null | grep -A 30 '"require"'
 # Check docker services
 cat docker-compose.yml 2>/dev/null | grep -E "image:|postgres|mysql|redis|mongo|elastic"
 ```
+```
 
+**Step 2: Commit tech stack section**
+
+```bash
+git add skill/project-tooling-analyzer/SKILL.md
+git commit -m "feat: add tech stack detection from config files"
+```
+
+---
+
+## Phase 2: Marketplace Search
+
+### Task 4: Add Marketplace Sources section
+
+**Files:**
+- Modify: `skill/project-tooling-analyzer/SKILL.md`
+
+**Step 1: Add marketplace reference**
+
+Append to SKILL.md:
+
+```markdown
 ## Step 3: Search for Relevant Tools
 
 ### MCP Registries & Directories
@@ -127,7 +217,27 @@ For each detected technology, search:
 2. Skills marketplaces: `"[assistant] skill [technology]"`
 3. GitHub: `"[technology] mcp server"`, `"[technology] claude skill"`
 4. npm: `mcp-server-[technology]`, `@modelcontextprotocol/server-[technology]`
+```
 
+**Step 2: Commit marketplace section**
+
+```bash
+git add skill/project-tooling-analyzer/SKILL.md
+git commit -m "feat: add marketplace sources and search strategy"
+```
+
+---
+
+### Task 5: Add Quality Evaluation section
+
+**Files:**
+- Modify: `skill/project-tooling-analyzer/SKILL.md`
+
+**Step 1: Add quality criteria**
+
+Append to SKILL.md:
+
+```markdown
 ## Step 4: Evaluate Tool Quality
 
 ### Quality Criteria
@@ -149,7 +259,29 @@ For each detected technology, search:
 | ⭐⭐ Bruikbaar | 50-75% | Works but less active |
 | ⭐ Experimenteel | <50% | May work, has risks |
 | ❌ Afraden | - | Abandoned, broken, security issues |
+```
 
+**Step 2: Commit quality section**
+
+```bash
+git add skill/project-tooling-analyzer/SKILL.md
+git commit -m "feat: add quality evaluation criteria and ratings"
+```
+
+---
+
+## Phase 3: Output & Actions
+
+### Task 6: Add Output Template section
+
+**Files:**
+- Modify: `skill/project-tooling-analyzer/SKILL.md`
+
+**Step 1: Add output template**
+
+Append to SKILL.md:
+
+```markdown
 ## Output Format
 
 Present findings in this structure:
@@ -186,7 +318,27 @@ Present findings in this structure:
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
+```
 
+**Step 2: Commit output section**
+
+```bash
+git add skill/project-tooling-analyzer/SKILL.md
+git commit -m "feat: add output format template"
+```
+
+---
+
+### Task 7: Add Interactive Actions section
+
+**Files:**
+- Modify: `skill/project-tooling-analyzer/SKILL.md`
+
+**Step 1: Add action commands**
+
+Append to SKILL.md:
+
+```markdown
 ## Interactive Actions
 
 After presenting recommendations, offer these actions:
@@ -218,7 +370,29 @@ curl -o .cursorrules https://cursor.directory/api/rules/[rule-name]
 ```bash
 # Edit ~/.continue/config.json to add context provider
 ```
+```
 
+**Step 2: Commit actions section**
+
+```bash
+git add skill/project-tooling-analyzer/SKILL.md
+git commit -m "feat: add interactive actions and installation commands"
+```
+
+---
+
+## Phase 4: Scaffold Process
+
+### Task 8: Add Skill Scaffold section
+
+**Files:**
+- Modify: `skill/project-tooling-analyzer/SKILL.md`
+
+**Step 1: Add skill scaffold process**
+
+Append to SKILL.md:
+
+```markdown
 ## Scaffold Process
 
 When no quality tool exists, offer to create one.
@@ -271,12 +445,34 @@ Provide next steps:
 4. Add to config: `claude mcp add ./`
 5. (Optional) Publish to npm
 6. (Optional) Submit to MCP Registry
+```
 
+**Step 2: Commit scaffold section**
+
+```bash
+git add skill/project-tooling-analyzer/SKILL.md
+git commit -m "feat: add scaffold process for skills and MCP servers"
+```
+
+---
+
+## Phase 5: Finalization
+
+### Task 9: Add Quick Reference and Common Mistakes
+
+**Files:**
+- Modify: `skill/project-tooling-analyzer/SKILL.md`
+
+**Step 1: Add quick reference**
+
+Append to SKILL.md:
+
+```markdown
 ## Quick Reference
 
 | Tech Stack | Recommended Tools |
 |------------|-------------------|
-| Node.js/React/Next | Search marketplaces for framework-specific tools |
+| Node.js/React/Next | - |
 | PHP/Laravel | moai-lang-php skill, laravel-boost MCP |
 | Python/FastAPI | python MCP |
 | PostgreSQL | postgres MCP |
@@ -302,3 +498,83 @@ Provide next steps:
 ### Over-recommending
 **Problem:** Suggesting 10+ tools overwhelms the user
 **Fix:** Limit to 3-5 most relevant recommendations per category
+```
+
+**Step 2: Commit quick reference**
+
+```bash
+git add skill/project-tooling-analyzer/SKILL.md
+git commit -m "feat: add quick reference and common mistakes sections"
+```
+
+---
+
+### Task 10: Review and Final Commit
+
+**Files:**
+- Review: `skill/project-tooling-analyzer/SKILL.md`
+
+**Step 1: Read complete SKILL.md**
+
+Review the full file for:
+- Consistent formatting
+- Complete sections
+- No placeholder text
+- Proper frontmatter
+
+**Step 2: Final commit on develop branch**
+
+```bash
+git add -A
+git commit -m "feat: complete project-tooling-analyzer skill v1.0"
+```
+
+**Step 3: Create summary**
+
+```bash
+git log --oneline develop
+```
+
+---
+
+## Phase 6: Testing (TDD Verification)
+
+### Task 11: Baseline Test (RED)
+
+**Before deploying, test the skill:**
+
+1. Open a test project (e.g., a Laravel project)
+2. Run analysis WITHOUT the skill
+3. Document what Claude does naturally
+4. Identify gaps in natural behavior
+
+### Task 12: Skill Test (GREEN)
+
+1. Install skill to `~/.claude/skills/project-tooling-analyzer/`
+2. Run analysis WITH the skill
+3. Verify Claude follows the skill's structure
+4. Document improvements over baseline
+
+### Task 13: Refinement (REFACTOR)
+
+1. Identify any missed edge cases
+2. Add explicit guidance for those cases
+3. Re-test until behavior is consistent
+
+---
+
+## Deployment
+
+After testing passes:
+
+```bash
+# Copy to Claude skills directory
+cp -r skill/project-tooling-analyzer ~/.claude/skills/
+
+# Verify installation
+ls ~/.claude/skills/project-tooling-analyzer/SKILL.md
+```
+
+---
+
+**Plan complete. Ready for execution.**
