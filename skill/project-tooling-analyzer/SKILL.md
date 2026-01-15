@@ -95,3 +95,210 @@ cat composer.json 2>/dev/null | grep -A 30 '"require"'
 # Check docker services
 cat docker-compose.yml 2>/dev/null | grep -E "image:|postgres|mysql|redis|mongo|elastic"
 ```
+
+## Step 3: Search for Relevant Tools
+
+### MCP Registries & Directories
+
+| Source | URL | Notes |
+|--------|-----|-------|
+| **Official MCP Registry** | registry.modelcontextprotocol.io | Official, has API |
+| **GitHub MCP Registry** | github.com/mcp | Integrated with repos |
+| **Docker MCP Catalog** | docs.docker.com/ai/mcp-catalog | Verified Docker images |
+| **MCP.SO** | mcp.so | Usage metrics, rankings |
+| **MCPMarket** | mcpmarket.com | Marketplace |
+| **Glama MCP** | glama.ai/mcp/servers | Curated |
+| **Awesome MCP Servers** | github.com/punkpeye/awesome-mcp-servers | Community curated |
+
+### Skills Marketplaces
+
+| Source | URL | Size | Compatibility |
+|--------|-----|------|---------------|
+| **SkillsMP** | skillsmp.com | 63,000+ | Claude, Codex, ChatGPT |
+| **SkillzWave** | skillzwave.ai | 44,000+ | Claude, Codex, Cursor, Gemini |
+| **Agent Skills CLI** | agentskills.in | 50,000+ | Claude, Codex, Copilot, Cursor |
+| **Claude Plugins** | claude-plugins.dev | - | Claude |
+| **Cursor Directory** | cursor.directory | - | Cursor rules |
+
+### Search Strategy
+
+For each detected technology, search:
+1. MCP registries: `"mcp server [technology]"`
+2. Skills marketplaces: `"[assistant] skill [technology]"`
+3. GitHub: `"[technology] mcp server"`, `"[technology] claude skill"`
+4. npm: `mcp-server-[technology]`, `@modelcontextprotocol/server-[technology]`
+
+## Step 4: Evaluate Tool Quality
+
+### Quality Criteria
+
+| Criterion | Weight | Good | Excellent |
+|-----------|--------|------|-----------|
+| GitHub stars | 20% | >100 | >500 |
+| Recent activity | 25% | <6 months | <3 months |
+| Documentation | 20% | README exists | Examples included |
+| Issue response | 15% | Some activity | Active maintainer |
+| Downloads | 10% | >100/week | >1000/week |
+| Official/curated | 10% | In a list | Official registry |
+
+### Quality Classification
+
+| Rating | Score | Meaning |
+|--------|-------|---------|
+| ⭐⭐⭐ Aanbevolen | >75% | Actively maintained, good docs |
+| ⭐⭐ Bruikbaar | 50-75% | Works but less active |
+| ⭐ Experimenteel | <50% | May work, has risks |
+| ❌ Afraden | - | Abandoned, broken, security issues |
+
+## Output Format
+
+Present findings in this structure:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│           PROJECT TOOLING ANALYSE: [project-naam]                   │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  📊 GEDETECTEERDE STACK                                             │
+│  • [Technology 1]                                                   │
+│  • [Technology 2]                                                   │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ✅ REEDS BESCHIKBAAR                                               │
+│  • [Installed skill/MCP] → [what it helps with]                     │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  🔍 AANBEVOLEN TOEVOEGINGEN                                         │
+│                                                                     │
+│  1. [Tool name]                                      [Rating]       │
+│     Bron: [URL]                                                     │
+│     Compatibel: [Assistants]                                        │
+│     Installatie: [command]                                          │
+│     → [What it enables]                                             │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ⚠️  GAPS - GEEN KWALITATIEVE TOOL GEVONDEN                         │
+│  • [Technology without good tooling]                                │
+│    → Scaffold beschikbaar: [command]                                │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+## Interactive Actions
+
+After presenting recommendations, offer these actions:
+
+| Action | Description |
+|--------|-------------|
+| **Install [tool]** | Add to `.mcp.json` or assistant config |
+| **Install all** | Batch install all recommended tools |
+| **Details [tool]** | Show README, examples, issues |
+| **Scaffold [name]** | Create new skill or MCP for gap |
+| **Ignore [tool]** | Add to ignore list for future runs |
+| **Export** | Save report to `docs/tooling-analysis.md` |
+
+### Installation Commands by Assistant
+
+**Claude MCP:**
+```bash
+# Add to .mcp.json
+claude mcp add [server-name]
+```
+
+**Cursor:**
+```bash
+# Add rules from cursor.directory
+curl -o .cursorrules https://cursor.directory/api/rules/[rule-name]
+```
+
+**Continue.dev:**
+```bash
+# Edit ~/.continue/config.json to add context provider
+```
+
+## Scaffold Process
+
+When no quality tool exists, offer to create one.
+
+### Scaffold Skill
+
+Ask these questions:
+1. What is the skill's purpose?
+2. What tasks should it support?
+3. Which AI assistants should it support?
+
+Generate SKILL.md with:
+- Frontmatter (name, description with "Use when...")
+- Overview section
+- When to Use section
+- Core patterns/commands
+- Common mistakes
+- Quick reference
+
+**Output location:** `~/.claude/skills/[name]/SKILL.md` (or equivalent for other assistants)
+
+### Scaffold MCP Server
+
+Ask these questions:
+1. Which language? (TypeScript recommended)
+2. What tools should it provide?
+3. What resources (read-only data)?
+4. Where to create the project?
+
+Generate project structure:
+```
+[project-name]/
+├── package.json
+├── tsconfig.json
+├── README.md
+├── src/
+│   ├── index.ts
+│   ├── server.ts
+│   ├── tools/
+│   │   └── [tool-name].ts
+│   └── resources/
+│       └── [resource-name].ts
+└── .mcp.json
+```
+
+Provide next steps:
+1. `cd [project] && npm install`
+2. Implement tool logic
+3. Test locally: `npm run dev`
+4. Add to config: `claude mcp add ./`
+5. (Optional) Publish to npm
+6. (Optional) Submit to MCP Registry
+
+## Quick Reference
+
+| Tech Stack | Recommended Tools |
+|------------|-------------------|
+| Node.js/React/Next | - |
+| PHP/Laravel | moai-lang-php skill, laravel-boost MCP |
+| Python/FastAPI | python MCP |
+| PostgreSQL | postgres MCP |
+| Redis | redis MCP |
+| GitHub | github MCP |
+| Shopify | shopify skill |
+| Stripe | stripe MCP |
+
+## Common Mistakes
+
+### Not checking installed tools first
+**Problem:** Recommending tools already installed
+**Fix:** Always run detection commands before searching marketplaces
+
+### Ignoring cross-platform compatibility
+**Problem:** Recommending Claude-only tools to Cursor user
+**Fix:** Check active assistant and prioritize compatible tools
+
+### Recommending abandoned tools
+**Problem:** Tool looks good but hasn't been updated in years
+**Fix:** Always check last commit date and issue activity
+
+### Over-recommending
+**Problem:** Suggesting 10+ tools overwhelms the user
+**Fix:** Limit to 3-5 most relevant recommendations per category
