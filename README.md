@@ -6,6 +6,7 @@ Resolves and provisions the skills and MCP servers needed for any project.
 
 This skill for AI coding assistants (Claude Code, Codex, Cursor, etc.) analyzes your project and:
 
+0. **Verifies** the project exists (git repo, config files, or source directories)
 1. **Inventories** currently installed skills and MCPs across AI assistants
 2. **Detects conflicts** between installed tools (functional overlaps and incompatibilities)
 3. **Resolves** which tools are needed based on your tech stack
