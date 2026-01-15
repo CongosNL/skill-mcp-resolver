@@ -85,7 +85,7 @@ Vite, Webpack, Rollup, esbuild, Turborepo, Nx, Lerna, pnpm workspaces
 ### Monitoring
 Sentry, Datadog, New Relic, PostHog, ELK Stack
 
-See [SKILL.md](skill/skill-mcp-resolver/SKILL.md) for the complete detection matrix.
+See [tech-detection.md](skill/skill-mcp-resolver/references/tech-detection.md) for the complete detection matrix.
 
 ## Tool Sources
 
