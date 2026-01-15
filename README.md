@@ -7,8 +7,9 @@ Resolves and provisions the skills and MCP servers needed for any project.
 This skill for AI coding assistants (Claude Code, Codex, Cursor, etc.) analyzes your project and:
 
 1. **Inventories** currently installed skills and MCPs across AI assistants
-2. **Resolves** which tools are needed based on your tech stack
-3. **Provisions** missing tools by installing or scaffolding them
+2. **Detects conflicts** between installed tools (functional overlaps and incompatibilities)
+3. **Resolves** which tools are needed based on your tech stack
+4. **Provisions** missing tools by installing or scaffolding them
 
 ## Installation
 
@@ -86,6 +87,31 @@ Vite, Webpack, Rollup, esbuild, Turborepo, Nx, Lerna, pnpm workspaces
 Sentry, Datadog, New Relic, PostHog, ELK Stack
 
 See [tech-detection.md](skill/skill-mcp-resolver/references/tech-detection.md) for the complete detection matrix.
+
+## Conflict Detection
+
+Automatically detects and resolves conflicts between installed tools using a hybrid approach:
+
+**Detection methods:**
+- **Curated registry** - Known conflicts with explicit recommendations
+- **Heuristic matching** - Keyword extraction from tool names to detect overlaps
+
+**Conflict types:**
+| Type | Example | Resolution |
+|------|---------|------------|
+| Functional overlap | `postgres-mcp` + `supabase-mcp` | Keep higher-scored tool |
+| Incompatibility | `prettier-skill` + `eslint-format-skill` | Remove conflicting tool |
+
+**Resolution scoring:**
+```
+Score = Quality (40%) + Context Fit (35%) + Specificity (25%)
+```
+
+- **Quality**: GitHub stars, activity, documentation
+- **Context Fit**: How well the tool matches your project's tech stack
+- **Specificity**: Prefer focused tools over swiss-army-knife tools
+
+See [conflicts.md](skill/skill-mcp-resolver/references/conflicts.md) for the curated conflict registry.
 
 ## Tool Sources
 
