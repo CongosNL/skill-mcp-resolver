@@ -1,18 +1,18 @@
 ---
-name: project-tooling-analyzer
-description: Use when starting work on a new or unfamiliar project, when project dependencies change significantly, or when asked to recommend AI tooling. Analyzes project files to identify tech stack and suggests relevant skills and MCP servers.
+name: skill-mcp-resolver
+description: Use when starting work on a new or unfamiliar project, when project dependencies change significantly, or when asked to recommend AI tooling. Resolves which skills and MCPs are needed and provisions missing ones.
 ---
 
-# Project Tooling Analyzer
+# Skill MCP Resolver
 
-Analyzes project directories and recommends AI assistant skills and MCP servers for effective development, maintenance, and evolution.
+Resolves required AI assistant skills and MCP servers for a project, and provisions missing ones.
 
 ## Overview
 
 This skill performs three core functions:
 1. **Inventory** - Detect currently installed skills/MCPs across AI assistants
-2. **Analyze** - Identify project tech stack from config files
-3. **Recommend** - Suggest relevant tools from marketplaces, or scaffold new ones
+2. **Resolve** - Identify project tech stack and determine required tools
+3. **Provision** - Install recommended tools or scaffold new ones
 
 ## When to Use
 
