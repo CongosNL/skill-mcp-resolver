@@ -49,15 +49,30 @@ The skill activates when:
 
 Automatically detects technologies from config files:
 
-- **Node.js**: `package.json` (React, Next, Vue, etc.)
-- **PHP**: `composer.json` (Laravel, Symfony)
-- **Python**: `requirements.txt`, `pyproject.toml`
-- **Rust**: `Cargo.toml`
-- **Go**: `go.mod`
-- **Ruby**: `Gemfile`
-- **.NET**: `*.csproj`, `*.sln`
-- **Java**: `pom.xml`, `build.gradle`
-- **Services**: `docker-compose.yml`
+| Category | Files | Technologies |
+|----------|-------|--------------|
+| **Languages** | | |
+| Node.js | `package.json` | React, Next.js, Vue, Angular, Express, etc. |
+| PHP | `composer.json` | Laravel, Symfony, WordPress |
+| Python | `requirements.txt`, `pyproject.toml` | Django, FastAPI, Flask |
+| Rust | `Cargo.toml` | Actix, Rocket, Tokio |
+| Go | `go.mod` | Gin, Echo, Fiber |
+| Ruby | `Gemfile` | Rails, Sinatra |
+| .NET | `*.csproj`, `*.sln` | ASP.NET, Blazor |
+| Java | `pom.xml`, `build.gradle` | Spring, Quarkus |
+| **Databases & Services** | | |
+| Docker | `docker-compose.yml` | PostgreSQL, MySQL, Redis, MongoDB, Elasticsearch |
+| Prisma | `prisma/schema.prisma` | Database ORM |
+| **Backend as a Service** | | |
+| Supabase | `supabase/` | Auth, Database, Storage |
+| Firebase | `firebase.json` | Auth, Firestore, Functions |
+| **E-commerce** | | |
+| Shopify | `shopify.theme.toml` | Themes, Apps, Liquid |
+| **Deployment** | | |
+| Vercel | `vercel.json` | Serverless, Edge |
+| Netlify | `netlify.toml` | JAMstack, Functions |
+| **CI/CD** | | |
+| GitHub Actions | `.github/workflows/*` | Automation, Testing |
 
 ## Tool Sources
 
