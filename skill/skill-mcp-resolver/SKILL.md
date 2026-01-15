@@ -106,9 +106,10 @@ After detecting installed tools and tech stack, check for conflicts before recom
 
 ### Conflict Detection Process
 
-1. **Check curated registry first** - Look up tool pairs in [references/conflicts.md](references/conflicts.md)
-2. **Apply heuristic detection** - For tools not in registry, extract keywords and check overlap
-3. **Score and recommend** - Calculate resolution scores and generate recommendations
+1. **Check known non-conflicts** - Skip pairs listed in [references/conflicts.md#known-non-conflicts](references/conflicts.md#known-non-conflicts)
+2. **Check curated conflicts** - Look up tool pairs in [references/conflicts.md](references/conflicts.md)
+3. **Apply heuristic detection** - For tools not in registry, extract keywords and check overlap
+4. **Score and recommend** - Calculate resolution scores and generate recommendations
 
 ### Heuristic Detection
 

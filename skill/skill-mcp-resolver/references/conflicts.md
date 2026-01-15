@@ -72,6 +72,18 @@ Common pattern: generic database MCP vs provider-specific MCP.
 | sanity-mcp, contentful-mcp | CMS operations | context_dependent | Match project's CMS |
 | strapi-mcp, payload-mcp | CMS operations | context_dependent | Match project's CMS |
 
+## Known Non-Conflicts
+
+Tool pairs that heuristic detection may flag but are actually complementary (different domains/platforms).
+
+| Tools | Why Not a Conflict |
+|-------|-------------------|
+| bol-retailer-api, marktplaats-api | Different platforms (bol.com vs marktplaats.nl), both needed for Dutch market |
+| code-review-specialist, skill-evaluator | Different domains (reviews code vs reviews skills) |
+| prd, ralph | Complementary workflow (prd creates PRDs, ralph converts to JSON) |
+| shopify, bol-retailer-api | Different e-commerce platforms |
+| shopify, marktplaats-api | Different platforms (e-commerce vs classifieds) |
+
 ## Contributing
 
 To add a new conflict:
@@ -79,3 +91,8 @@ To add a new conflict:
 2. Add to appropriate section
 3. Provide clear recommendation and reason
 4. If context-dependent, explain what context determines the choice
+
+To add a known non-conflict:
+1. Identify tool pairs flagged by heuristic detection
+2. Verify they serve different domains/platforms/purposes
+3. Add to "Known Non-Conflicts" with explanation
