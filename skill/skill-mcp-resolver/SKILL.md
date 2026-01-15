@@ -7,6 +7,20 @@ description: Use when starting work on a new or unfamiliar project, when project
 
 Resolves required AI assistant skills and MCP servers for a project, and provisions missing ones.
 
+## Contents
+
+- [Overview](#overview)
+- [Step 1: Detect Current Setup](#step-1-detect-current-setup)
+- [Step 2: Analyze Project Tech Stack](#step-2-analyze-project-tech-stack)
+- [Step 3: Search for Relevant Tools](#step-3-search-for-relevant-tools)
+- [Step 4: Evaluate Tool Quality](#step-4-evaluate-tool-quality)
+- [Output Format](#output-format)
+- [Interactive Actions](#interactive-actions)
+- [Scaffold Process](#scaffold-process)
+- [Quick Reference](#quick-reference)
+- [Error Handling](#error-handling)
+- [Common Mistakes](#common-mistakes)
+
 ## Overview
 
 This skill performs three core functions:
@@ -293,72 +307,12 @@ Ask these questions:
 3. What resources (read-only data)?
 4. Where to create the project?
 
-Generate project with this starter template:
-
-**package.json:**
-```json
-{
-  "name": "mcp-server-[name]",
-  "version": "0.1.0",
-  "type": "module",
-  "main": "dist/index.js",
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0"
-  },
-  "devDependencies": {
-    "typescript": "^5.0.0"
-  }
-}
-```
-
-**src/index.ts:**
-```typescript
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-
-const server = new Server({ name: "mcp-server-[name]", version: "0.1.0" }, {
-  capabilities: { tools: {} }
-});
-
-server.setRequestHandler("tools/list", async () => ({
-  tools: [{
-    name: "[tool-name]",
-    description: "[What the tool does]",
-    inputSchema: { type: "object", properties: {} }
-  }]
-}));
-
-server.setRequestHandler("tools/call", async (request) => {
-  if (request.params.name === "[tool-name]") {
-    return { content: [{ type: "text", text: "Result" }] };
-  }
-  throw new Error("Unknown tool");
-});
-
-new StdioServerTransport().connect(server);
-```
-
-**Project structure:**
-```
-[project-name]/
-├── package.json
-├── tsconfig.json
-├── src/
-│   └── index.ts
-└── .mcp.json
-```
-
-Provide next steps:
-1. `cd [project] && npm install`
-2. Implement tool logic
-3. Test locally: `npm run dev`
-4. Add to config: `claude mcp add ./`
-5. (Optional) Publish to npm
-6. (Optional) Submit to MCP Registry
+Use the starter template in [templates/mcp-server-starter.md](templates/mcp-server-starter.md) which includes:
+- `package.json` with MCP SDK dependency
+- `tsconfig.json` for TypeScript
+- `src/index.ts` with basic tool handler
+- `.mcp.json` for local testing
+- Next steps for implementation and publishing
 
 ## Quick Reference
 
