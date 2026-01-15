@@ -12,6 +12,7 @@ Resolves required AI assistant skills and MCP servers for a project, and provisi
 - [Overview](#overview)
 - [Step 1: Detect Current Setup](#step-1-detect-current-setup)
 - [Step 2: Analyze Project Tech Stack](#step-2-analyze-project-tech-stack)
+- [Step 2.5: Detect Conflicts](#step-25-detect-conflicts)
 - [Step 3: Search for Relevant Tools](#step-3-search-for-relevant-tools)
 - [Step 4: Evaluate Tool Quality](#step-4-evaluate-tool-quality)
 - [Output Format](#output-format)
@@ -27,13 +28,6 @@ This skill performs three core functions:
 1. **Inventory** - Detect currently installed skills/MCPs across AI assistants
 2. **Resolve** - Identify project tech stack and determine required tools
 3. **Provision** - Install recommended tools or scaffold new ones
-
-## When to Use
-
-- Starting work on a new/unfamiliar codebase
-- After significant dependency changes (new framework, database, etc.)
-- When asked "what tools do I need for this project?"
-- Periodically to check for new relevant tooling
 
 ## Step 1: Detect Current Setup
 
@@ -106,6 +100,64 @@ cat package.json 2>/dev/null | grep -E "next|react|vue|angular|express"
 ls -d terraform/ kubernetes/ helm/ .github/workflows/ 2>/dev/null
 ```
 
+## Step 2.5: Detect Conflicts
+
+After detecting installed tools and tech stack, check for conflicts before recommending new tools.
+
+### Conflict Detection Process
+
+1. **Check curated registry first** - Look up tool pairs in [references/conflicts.md](references/conflicts.md)
+2. **Apply heuristic detection** - For tools not in registry, extract keywords and check overlap
+3. **Score and recommend** - Calculate resolution scores and generate recommendations
+
+### Heuristic Detection
+
+Extract keywords from tool names using patterns in [references/tech-detection.md](references/tech-detection.md#tool-keyword-mappings):
+
+```
+Tool: "postgres-mcp"
+  → Pattern match: *postgres*
+  → Keywords: [postgres, postgresql, database, sql, relational]
+
+Tool: "supabase-mcp"
+  → Pattern match: *supabase*
+  → Keywords: [supabase, postgres, database, auth, storage, baas]
+
+Overlap: [postgres, database] = 2 keywords
+Smaller set: 5 keywords
+Overlap ratio: 2/5 = 40%
+```
+
+**Conflict threshold:** Flag when overlap ≥ 50% of smaller keyword set.
+
+### Resolution Scoring
+
+When conflict detected, score each tool:
+
+```
+Total Score = (Quality × 0.4) + (Context Fit × 0.35) + (Specificity × 0.25)
+```
+
+| Factor | Calculation |
+|--------|-------------|
+| **Quality** | Existing quality criteria (stars, activity, docs) normalized to 0-100 |
+| **Context Fit** | `(matched_tech / tool_tech) × 100` - how well tool matches project stack |
+| **Specificity** | Single tech: 100, Tech family: 60, Broad category: 30 |
+
+### Curated Override
+
+If [references/conflicts.md](references/conflicts.md) has explicit recommendation:
+- Use curated recommendation directly
+- Skip scoring unless marked `context_dependent`
+- Include curated reason in output
+
+### Conflict Types
+
+| Type | Description | Action |
+|------|-------------|--------|
+| **Functional overlap** | Tools do similar things | Recommend keeping higher-scored tool |
+| **Incompatibility** | Tools conflict when used together | Recommend removal of lower-scored tool |
+
 ## Step 3: Search for Relevant Tools
 
 ### MCP Registries & Directories
@@ -175,7 +227,25 @@ Present findings in this structure:
 │                                                                     │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│  ✅ ALREADY AVAILABLE                                               │
+│  ⚠️  CONFLICTS DETECTED                                             │
+│                                                                     │
+│  1. [tool-a] ↔ [tool-b]                                             │
+│     Type: [Functional overlap / Incompatibility] ([overlap area])   │
+│     ┌─────────────────┬─────────────────┐                           │
+│     │ [tool-a]        │ [tool-b]        │                           │
+│     ├─────────────────┼─────────────────┤                           │
+│     │ Quality:    [n] │ Quality:    [n] │                           │
+│     │ Context:    [n] │ Context:    [n] │                           │
+│     │ Specificity:[n] │ Specificity:[n] │                           │
+│     │ ─────────────── │ ─────────────── │                           │
+│     │ TOTAL:      [n] │ TOTAL:      [n] │                           │
+│     └─────────────────┴─────────────────┘                           │
+│     → Recommend: KEEP [winner], REMOVE [loser]                      │
+│     → Reason: [explanation]                                         │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ✅ ALREADY AVAILABLE (no conflicts)                                │
 │  • [Installed skill/MCP] → [what it helps with]                     │
 │                                                                     │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -187,6 +257,7 @@ Present findings in this structure:
 │     Compatible: [Assistants]                                        │
 │     Install: [command]                                              │
 │     → [What it enables]                                             │
+│     ⚠️  Conflicts with: [existing-tool] (use resolves [n])          │
 │                                                                     │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
@@ -196,6 +267,8 @@ Present findings in this structure:
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
+
+**Note:** The CONFLICTS DETECTED section only appears when conflicts are found. If no conflicts exist, it is omitted entirely.
 
 ## Interactive Actions
 
@@ -209,6 +282,10 @@ After presenting recommendations, offer these actions:
 | **Scaffold [name]** | Create new skill or MCP for gap |
 | **Ignore [tool]** | Add to ignore list for future runs |
 | **Export** | Save report to `docs/tooling-analysis.md` |
+| **Resolve conflict [n]** | Apply recommendation (remove losing tool) |
+| **Resolve all** | Apply all conflict recommendations |
+| **Keep [tool]** | Override recommendation, keep specific tool instead |
+| **Ignore conflict [n]** | Add to ignore list, stop warning about this pair |
 
 ### Installation Commands by Assistant
 
@@ -322,9 +399,17 @@ If no tools found for a technology:
 
 ### Conflicting Recommendations
 If multiple tools exist for same purpose:
-- Compare quality scores and pick highest
-- If scores equal, prefer official/curated sources
-- Note alternatives in output for user choice
+- Check [references/conflicts.md](references/conflicts.md) for curated guidance
+- If not in registry, use heuristic detection (see Step 2.5)
+- Apply resolution scoring: Quality (40%) + Context Fit (35%) + Specificity (25%)
+- Present comparison table with scores and recommendation
+
+### Unknown Tool Pair
+If heuristic detection flags a conflict not in the curated registry:
+- Mark as "Potential conflict (unverified)"
+- Still show comparison scores
+- Invite user to confirm or dismiss
+- Suggest adding to registry if confirmed
 
 ## Common Mistakes
 
@@ -343,3 +428,11 @@ If multiple tools exist for same purpose:
 ### Over-recommending
 **Problem:** Suggesting 10+ tools overwhelms the user
 **Fix:** Limit to 3-5 most relevant recommendations per category
+
+### Ignoring existing conflicts
+**Problem:** Recommending new tools without checking for conflicts with installed tools
+**Fix:** Always run conflict detection (Step 2.5) before presenting recommendations
+
+### Missing context-dependent conflicts
+**Problem:** Recommending removal of a tool that matches the project's tech stack
+**Fix:** Check `context_dependent` entries against detected stack before recommending
