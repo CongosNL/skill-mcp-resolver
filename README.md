@@ -47,32 +47,45 @@ The skill activates when:
 
 ## Detected Tech Stacks
 
-Automatically detects technologies from config files:
+Automatically detects 100+ technologies from config files:
 
-| Category | Files | Technologies |
-|----------|-------|--------------|
-| **Languages** | | |
-| Node.js | `package.json` | React, Next.js, Vue, Angular, Express, etc. |
-| PHP | `composer.json` | Laravel, Symfony, WordPress |
-| Python | `requirements.txt`, `pyproject.toml` | Django, FastAPI, Flask |
-| Rust | `Cargo.toml` | Actix, Rocket, Tokio |
-| Go | `go.mod` | Gin, Echo, Fiber |
-| Ruby | `Gemfile` | Rails, Sinatra |
-| .NET | `*.csproj`, `*.sln` | ASP.NET, Blazor |
-| Java | `pom.xml`, `build.gradle` | Spring, Quarkus |
-| **Databases & Services** | | |
-| Docker | `docker-compose.yml` | PostgreSQL, MySQL, Redis, MongoDB, Elasticsearch |
-| Prisma | `prisma/schema.prisma` | Database ORM |
-| **Backend as a Service** | | |
-| Supabase | `supabase/` | Auth, Database, Storage |
-| Firebase | `firebase.json` | Auth, Firestore, Functions |
-| **E-commerce** | | |
-| Shopify | `shopify.theme.toml` | Themes, Apps, Liquid |
-| **Deployment** | | |
-| Vercel | `vercel.json` | Serverless, Edge |
-| Netlify | `netlify.toml` | JAMstack, Functions |
-| **CI/CD** | | |
-| GitHub Actions | `.github/workflows/*` | Automation, Testing |
+### Languages & Frameworks
+Node.js, PHP, Python, Rust, Go, Ruby, .NET, Java/Kotlin, Dart/Flutter, Swift, Elixir, Deno, Bun
+
+### Databases & ORMs
+Prisma, Drizzle, TypeORM, Sequelize, Knex, SQLAlchemy, Diesel, PostgreSQL, MongoDB, Redis
+
+### Infrastructure & DevOps
+Docker, Kubernetes, Helm, Terraform, Pulumi, Serverless, AWS SAM/CDK, Azure Bicep, Ansible
+
+### CI/CD
+GitHub Actions, GitLab CI, CircleCI, Jenkins, Travis CI, Azure DevOps, Bitbucket Pipelines
+
+### Cloud & Deployment
+Vercel, Netlify, Fly.io, Render, Railway, Heroku, Google App Engine, AWS Amplify, Cloudflare
+
+### Backend as a Service
+Supabase, Firebase, Appwrite, Convex, PocketBase, Nhost
+
+### E-commerce & CMS
+Shopify, Medusa, Saleor, Strapi, Sanity, Contentful, Payload CMS, KeystoneJS, Directus
+
+### API & GraphQL
+OpenAPI/Swagger, GraphQL, Apollo, tRPC
+
+### Auth & Identity
+NextAuth.js, Clerk, Auth0, Lucia, Kinde
+
+### Testing
+Jest, Vitest, Playwright, Cypress, Pytest, RSpec
+
+### Build & Monorepo
+Vite, Webpack, Rollup, esbuild, Turborepo, Nx, Lerna, pnpm workspaces
+
+### Monitoring
+Sentry, Datadog, New Relic, PostHog, ELK Stack
+
+See [SKILL.md](skill/skill-mcp-resolver/SKILL.md) for the complete detection matrix.
 
 ## Tool Sources
 
