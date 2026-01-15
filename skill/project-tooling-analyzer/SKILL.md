@@ -54,3 +54,44 @@ ls ~/.codex/skills/*/SKILL.md 2>/dev/null
 # Cursor rules
 cat .cursorrules 2>/dev/null
 ```
+
+## Step 2: Analyze Project Tech Stack
+
+Detect technologies from config files:
+
+| File | Indicates |
+|------|-----------|
+| `package.json` | Node.js, npm packages, frameworks (React, Next, Vue, etc.) |
+| `composer.json` | PHP, Composer packages (Laravel, Symfony) |
+| `requirements.txt` | Python, pip packages |
+| `pyproject.toml` | Python, Poetry packages |
+| `Cargo.toml` | Rust, crates |
+| `go.mod` | Go, modules |
+| `Gemfile` | Ruby, gems (Rails) |
+| `*.csproj` / `*.sln` | .NET, C# |
+| `pom.xml` / `build.gradle` | Java (Maven/Gradle) |
+| `docker-compose.yml` | Services (databases, caches, queues) |
+| `.github/workflows/*` | CI/CD (GitHub Actions) |
+| `prisma/schema.prisma` | Prisma ORM |
+| `supabase/` | Supabase BaaS |
+| `firebase.json` | Firebase BaaS |
+| `shopify.theme.toml` | Shopify |
+| `vercel.json` | Vercel deployment |
+| `netlify.toml` | Netlify deployment |
+
+### Detection Commands
+
+```bash
+# List all config files in project root
+ls -la package.json composer.json requirements.txt pyproject.toml \
+   Cargo.toml go.mod Gemfile *.csproj docker-compose.yml 2>/dev/null
+
+# Check package.json dependencies
+cat package.json 2>/dev/null | grep -A 50 '"dependencies"'
+
+# Check composer.json require
+cat composer.json 2>/dev/null | grep -A 30 '"require"'
+
+# Check docker services
+cat docker-compose.yml 2>/dev/null | grep -E "image:|postgres|mysql|redis|mongo|elastic"
+```
