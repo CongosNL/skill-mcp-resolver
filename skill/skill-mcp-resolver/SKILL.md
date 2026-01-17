@@ -30,6 +30,16 @@ This skill performs three core functions:
 2. **Resolve** - Identify project tech stack and determine required tools
 3. **Provision** - Install recommended tools or scaffold new ones
 
+### Important: Central vs Project-Local Tools
+
+**Skills** are installed centrally (`~/.claude/skills/`) and are available across all projects. Skills that aren't relevant to the current project are simply not invoked - this is expected behavior, not a problem. Only report skills as "already available" if they match the detected tech stack.
+
+**MCPs** can be:
+- **Global** (`~/.claude/settings.json`) - Available everywhere, same principle as skills
+- **Project-local** (`.mcp.json`) - Specific to this project
+
+When evaluating tools, only flag gaps for technologies actually used in the project. Centrally installed tools for other technologies (e.g., a Shopify skill in a Laravel project) are irrelevant to the analysis and should be ignored in the final conclusion.
+
 ## Step 0: Verify Project Exists
 
 Skip analysis if no real project is detected. Check these indicators:
@@ -268,8 +278,11 @@ Present findings in this structure:
 │                                                                     │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│  ✅ ALREADY AVAILABLE (no conflicts)                                │
+│  ✅ ALREADY AVAILABLE (relevant to this project)                    │
 │  • [Installed skill/MCP] → [what it helps with]                     │
+│                                                                     │
+│  ℹ️  Note: [n] other centrally installed skills not shown           │
+│     (not relevant to detected stack - this is normal)               │
 │                                                                     │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
@@ -459,3 +472,7 @@ If heuristic detection flags a conflict not in the curated registry:
 ### Missing context-dependent conflicts
 **Problem:** Recommending removal of a tool that matches the project's tech stack
 **Fix:** Check `context_dependent` entries against detected stack before recommending
+
+### Flagging irrelevant central skills as issues
+**Problem:** Reporting centrally installed skills that don't match the project as gaps or problems
+**Fix:** Skills are centrally installed and available across all projects. A Shopify skill in a Laravel-only project is not a problem - it's simply unused. Only include skills in "ALREADY AVAILABLE" if they match the detected stack; ignore others silently
